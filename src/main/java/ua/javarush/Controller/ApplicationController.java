@@ -1,4 +1,4 @@
-package ua.javarush.Controller;
+package ua.javarush.controller;
 
 import ua.javarush.io.FileService;
 

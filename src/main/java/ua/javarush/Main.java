@@ -1,9 +1,7 @@
 package ua.javarush;
 
-import ua.javarush.Controller.ApplicationController;
-import ua.javarush.cipher.CaeserCipher;
+import ua.javarush.cipher.CaesarCipher;
 import ua.javarush.constants.EnglishAlphabet;
-import ua.javarush.io.FileService;
 
 import java.util.Arrays;
 
@@ -11,9 +9,14 @@ public class Main {
     public static void main(String[] args) {
 
         //new ApplicationController(new FileService(32)).runApplication();
-        new CaeserCipher(Arrays.asList( EnglishAlphabet.ENGLISH_ALPHABET)).encode("abaabcddzzzz&&&????  ", 3);
-        System.out.println("==============================================================================");
-        new CaeserCipher(Arrays.asList( EnglishAlphabet.ENGLISH_ALPHABET)).encode("abaabcddzz????    " +
+        new CaesarCipher(Arrays.asList( EnglishAlphabet.ENGLISH_ALPHABET)).caesarCipherCode("abaabcddzzzz&&&????  ", 3);
+        System.out.println();
+        System.out.println("------------------------------------------------------------------------------");
+        new CaesarCipher(Arrays.asList( EnglishAlphabet.ENGLISH_ALPHABET)).caesarCipherCode("abaabcddzz????    " +
                 "", 67);
+        System.out.println();
+        System.out.println("==============================================================================");
+        new CaesarCipher(Arrays.asList( EnglishAlphabet.ENGLISH_ALPHABET)).caesarCipherCode("deddefgg««««&&&BBBBCC", -3);
+        new CaesarCipher(Arrays.asList( EnglishAlphabet.ENGLISH_ALPHABET)).caesarCipherCode("fgffghii\"\"DDDDEEEE", -67);
     }
 }
