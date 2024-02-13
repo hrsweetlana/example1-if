@@ -1,41 +1,56 @@
 package ua.javarush.io;
 
+import ua.javarush.cipher.CaesarCipher;
 import ua.javarush.options.Option;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class FileService {
 
     public static final int DEFAULT_BUFFER_CAPACITY = 32;
     private int bufferCapacity;
-    private String filePath;
+    private String sourceFileName;
+    private CaesarCipher caesarCipher;
+    private Option option;
+    private int key;
 
-    public FileService(){
-        this.bufferCapacity = DEFAULT_BUFFER_CAPACITY;
-    }
-
-    public FileService(int bufferCapacity){
-        if(bufferCapacity < 0){
-            throw new IllegalArgumentException("Buffer capacity should be possitive value, current value: " + bufferCapacity);
+    public FileService(int bufferCapacity, String sourceFileName, CaesarCipher caesarCipher, Option option, int key) {
+        if (bufferCapacity < 0) {
+            throw new IllegalArgumentException("Buffer capacity should be positive value, current value: " + bufferCapacity);
+        }
+        if (!isFilePathCorrect(sourceFileName)) {
+            throw new IllegalArgumentException("File path is wrong, current value: " + sourceFileName);
         }
         this.bufferCapacity = Math.max(DEFAULT_BUFFER_CAPACITY, bufferCapacity);
+        this.sourceFileName = sourceFileName;
+        this.caesarCipher = caesarCipher;
+        this.option = option;
+        this.key = key;
     }
-    public void copyFromFileToFile(String sourceFileName, String targetFileName){
-        File sourceFile = new File(sourceFileName);
-        File targetFile = new File(targetFileName);
 
-        //TODO: Files.isRegularFile(Path.of(sourceFileName));
+    private void initializeKey(Option option){
+        if(option.equals(Option.DECRYPT)){
+            key = -key;
+        }
+    }
 
-        try(InputStream inputStream = new FileInputStream(sourceFileName);
-            OutputStream outputStream = new FileOutputStream(targetFileName)){
+    public void copyFromSourceToTarget() {
+        String targetFileName = createTargetFileName(Path.of(sourceFileName), option);
+        initializeKey(option);
+        try (FileReader inputStream = new FileReader(sourceFileName);
+             FileWriter outputStream = new FileWriter(targetFileName)) {
             int numberOfBytes;
-            byte[] buffer = new byte[bufferCapacity];
-            while((numberOfBytes = inputStream.read(buffer)) != -1){
+            char[] buffer = new char[bufferCapacity];
+            while ((numberOfBytes = inputStream.read(buffer)) != -1) {
+
                 System.out.println(new String(buffer, 0, numberOfBytes));
+                String text = new String(buffer, 0, numberOfBytes);
+                buffer = caesarCipher.caesarCipherCode(text, key);
                 outputStream.write(buffer, 0, numberOfBytes);
             }
-        }catch(IOException e){
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -43,15 +58,12 @@ public class FileService {
            2) "c:\\study\\source\\a.txt" DECODE      ---> c:\\study\\source\\a.txt_DECODE.txt
            3) "c:\\study\\source\\a.txt" BRUTE_FORCE ---> c:\\study\\source\\a.txt_BRUTE_FORCE.txt
     */
-    public String createTargetFileName(Path path, Option option){
-        String fileName = path.getFileName().toString();
-        String directoryName = path.getParent().toString();
 
-        switch(option){
-            case ENCRYPT : return "1";
-            case DECRYPT : return "2";
-            case BRUTE_FORCE : return "3";
-        }
-        throw new UnsupportedOperationException();
+    private boolean isFilePathCorrect(String sourceFileName) {
+        return Files.isRegularFile(Path.of(sourceFileName));
+    }
+
+    private String createTargetFileName(Path path, Option option) {
+        return path + "_" + option.name();
     }
 }
