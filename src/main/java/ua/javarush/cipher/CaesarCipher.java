@@ -47,7 +47,4 @@ public class CaesarCipher {
         }
         return resultCharArray;
     }
-    public void encode(){} //TODO:calls caesarCipherCode with key > 0
-    public void decode(){} //TODO:calls caesarCipherCode with key < 0
-
 }

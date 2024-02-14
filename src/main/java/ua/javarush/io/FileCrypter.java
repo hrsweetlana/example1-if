@@ -20,7 +20,7 @@ public class FileCrypter {
         if (bufferCapacity < 0) {
             throw new IllegalArgumentException("Buffer capacity should be positive value, current value: " + bufferCapacity);
         }
-        if (!isFilePathCorrect(sourceFileName)) {
+        if (!(isFilePathCorrect(sourceFileName))) {
             throw new IllegalArgumentException("File path is wrong, current value: " + sourceFileName);
         }
         this.bufferCapacity = Math.max(DEFAULT_BUFFER_CAPACITY, bufferCapacity);
@@ -33,7 +33,7 @@ public class FileCrypter {
         if (bufferCapacity < 0) {
             throw new IllegalArgumentException("Buffer capacity should be positive value, current value: " + bufferCapacity);
         }
-        if (!isFilePathCorrect(sourceFileName)) {
+        if (!(isFilePathCorrect(sourceFileName))) {
             throw new IllegalArgumentException("File path is wrong, current value: " + sourceFileName);
         }
         this.bufferCapacity = Math.max(DEFAULT_BUFFER_CAPACITY, bufferCapacity);
@@ -59,7 +59,7 @@ public class FileCrypter {
             copyFromSourceToTarget();
         }
     }
-
+    //TODO refactor with char parameters caesarCipherCode
     private void copyFromSourceToTarget() {
         String targetFileName = createTargetFileName(Path.of(sourceFileName), option);
         try (FileReader inputStream = new FileReader(sourceFileName);
@@ -79,14 +79,15 @@ public class FileCrypter {
     }
 
     private boolean isFilePathCorrect(String sourceFileName) {
+        System.out.println(sourceFileName);
         return Files.isRegularFile(Path.of(sourceFileName));
     }
 
-    //TODO: at the moment works incorrectly a.txt_ENCODE
+    //TODO: at the moment works incorrectly a.txt_ENCRYPT
     private String createTargetFileName(Path path, Option option) {
         return path + "_" + option.name();
-        /*      1) "c:\\study\\source\\a.txt" ENCODE      ---> c:\\study\\source\\a_ENCODE.txt
-                2) "c:\\study\\source\\a.txt" DECODE      ---> c:\\study\\source\\a_DECODE.txt
+        /*      1) "c:\\study\\source\\a.txt" ENCODE      ---> c:\\study\\source\\a_ENCRYPT.txt
+                2) "c:\\study\\source\\a.txt" DECODE      ---> c:\\study\\source\\a_DECRYPT.txt
                 3) "c:\\study\\source\\a.txt" BRUTE_FORCE ---> c:\\study\\source\\a_BRUTE_FORCE.txt
         */
     }
