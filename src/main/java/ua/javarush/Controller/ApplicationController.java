@@ -2,34 +2,26 @@ package ua.javarush.controller;
 
 import ua.javarush.cipher.CaesarCipher;
 import ua.javarush.constants.EnglishAlphabet;
-import ua.javarush.io.FileService;
-import ua.javarush.options.Option;
-
+import ua.javarush.io.FileCrypter;
 import java.util.Arrays;
 
 public class ApplicationController {
-    private  final FileService fileService;
-    private Option option;
-    private int passedKey;
-    private String filePath;
+    private final FileCrypter fileCrypter;
 
-
-
-    public ApplicationController(FileService fileService) {
-        this.fileService = fileService;
-        //this.caesarCipher = caesarCipher;
+    public ApplicationController(FileCrypter fileCrypter) {
+        this.fileCrypter = fileCrypter;
     }
 
-    public void runApplication(){
-        //caesarCipher.caesarCipherCode("abaabcddzzzz&&&????  ", 3);
-        fileService.copyFromSourceToTarget( );
+    public void runApplication() {
+
+        fileCrypter.identifyOption(fileCrypter.getOption());
     }
 
     public static void main(String[] args) {
         if (args.length > 0) {
-
-        }else { //TODO runCLI()
-            new ApplicationController(new FileService(32,"c:\\study\\source\\a.txt",new CaesarCipher(Arrays.asList( EnglishAlphabet.ENGLISH_ALPHABET)), Option.ENCRYPT,3)).runApplication();
+            new ApplicationController(new FileCrypter(32, args[0], new CaesarCipher(Arrays.asList(EnglishAlphabet.ENGLISH_ALPHABET)), args[1], Integer.parseInt(args[2]))).runApplication();
+        } else { //TODO runCLI()
+            //new ApplicationController(new FileCrypter(32, "c:\\study\\source\\a.txt", new CaesarCipher(Arrays.asList(EnglishAlphabet.ENGLISH_ALPHABET)), "ENCRYPT", 3)).runApplication();
         }
     }
 }

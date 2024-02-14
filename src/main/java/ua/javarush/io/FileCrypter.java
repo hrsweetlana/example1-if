@@ -7,7 +7,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class FileService {
+public class FileCrypter {
 
     public static final int DEFAULT_BUFFER_CAPACITY = 32;
     private int bufferCapacity;
@@ -16,7 +16,7 @@ public class FileService {
     private Option option;
     private int key;
 
-    public FileService(int bufferCapacity, String sourceFileName, CaesarCipher caesarCipher, Option option, int key) {
+    public FileCrypter(int bufferCapacity, String sourceFileName, CaesarCipher caesarCipher, String option) {
         if (bufferCapacity < 0) {
             throw new IllegalArgumentException("Buffer capacity should be positive value, current value: " + bufferCapacity);
         }
@@ -26,19 +26,42 @@ public class FileService {
         this.bufferCapacity = Math.max(DEFAULT_BUFFER_CAPACITY, bufferCapacity);
         this.sourceFileName = sourceFileName;
         this.caesarCipher = caesarCipher;
-        this.option = option;
+        this.key = 0;
+        this.option = Option.valueOf(option);
+    }
+    public FileCrypter(int bufferCapacity, String sourceFileName, CaesarCipher caesarCipher, String option, int key) {
+        if (bufferCapacity < 0) {
+            throw new IllegalArgumentException("Buffer capacity should be positive value, current value: " + bufferCapacity);
+        }
+        if (!isFilePathCorrect(sourceFileName)) {
+            throw new IllegalArgumentException("File path is wrong, current value: " + sourceFileName);
+        }
+        this.bufferCapacity = Math.max(DEFAULT_BUFFER_CAPACITY, bufferCapacity);
+        this.sourceFileName = sourceFileName;
+        this.caesarCipher = caesarCipher;
         this.key = key;
+        this.option = Option.valueOf(option);
     }
 
-    private void initializeKey(Option option){
+    public Option getOption() {
+        return option;
+    }
+
+    public void identifyOption(Option option){
+        if (option == null) {
+            //TODO call brute force method
+
+        }
         if(option.equals(Option.DECRYPT)){
             key = -key;
+            copyFromSourceToTarget();
+        }else if(option.equals(Option.ENCRYPT)){
+            copyFromSourceToTarget();
         }
     }
 
-    public void copyFromSourceToTarget() {
+    private void copyFromSourceToTarget() {
         String targetFileName = createTargetFileName(Path.of(sourceFileName), option);
-        initializeKey(option);
         try (FileReader inputStream = new FileReader(sourceFileName);
              FileWriter outputStream = new FileWriter(targetFileName)) {
             int numberOfBytes;
@@ -54,16 +77,17 @@ public class FileService {
             throw new RuntimeException(e);
         }
     }
-    /*     1) "c:\\study\\source\\a.txt" ENCODE      ---> c:\\study\\source\\a.txt_ENCODE.txt
-           2) "c:\\study\\source\\a.txt" DECODE      ---> c:\\study\\source\\a.txt_DECODE.txt
-           3) "c:\\study\\source\\a.txt" BRUTE_FORCE ---> c:\\study\\source\\a.txt_BRUTE_FORCE.txt
-    */
 
     private boolean isFilePathCorrect(String sourceFileName) {
         return Files.isRegularFile(Path.of(sourceFileName));
     }
 
+    //TODO: at the moment works incorrectly a.txt_ENCODE
     private String createTargetFileName(Path path, Option option) {
         return path + "_" + option.name();
+        /*      1) "c:\\study\\source\\a.txt" ENCODE      ---> c:\\study\\source\\a_ENCODE.txt
+                2) "c:\\study\\source\\a.txt" DECODE      ---> c:\\study\\source\\a_DECODE.txt
+                3) "c:\\study\\source\\a.txt" BRUTE_FORCE ---> c:\\study\\source\\a_BRUTE_FORCE.txt
+        */
     }
 }
