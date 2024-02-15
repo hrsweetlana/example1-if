@@ -1,11 +1,17 @@
 package ua.javarush.io;
 
+import ua.javarush.BruteForce.BruteForceDecription;
 import ua.javarush.cipher.CaesarCipher;
+import ua.javarush.constants.EnglishAlphabet;
+import ua.javarush.constants.EnglishLetterFrequency;
 import ua.javarush.options.Option;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FileCrypter {
 
@@ -13,7 +19,9 @@ public class FileCrypter {
     private int bufferCapacity;
     private String sourceFileName;
     private CaesarCipher caesarCipher;
+    private BruteForceDecription bruteForceDecription = null;
     private Option option;
+    private Map<Character, Integer> countedFrequency = new HashMap<>();
     private int key;
 
     //TODO:refactor constructor not to dublicate code
@@ -54,6 +62,8 @@ public class FileCrypter {
         if (option.equals(Option.BRUTE_FORCE)) {
             //TODO: call brute force method
             System.out.println("BRUTE_FORCE is running......");
+            bruteForceDecription = new BruteForceDecription(EnglishLetterFrequency.frequencyMap, Arrays.asList(EnglishAlphabet.ENGLISH_ALPHABET), countedFrequency);
+            System.out.println(countSourceLetterFrequency());
         }
         if (option.equals(Option.DECRYPT)) {
             key = -key;
@@ -62,6 +72,8 @@ public class FileCrypter {
             copyFromSourceToTarget();
         }
     }
+
+
 
     /*TODO: refactor? is there a sense to create a buffer or use Arrays copy methods
        to avoid crypting null bytes in array
@@ -82,6 +94,20 @@ public class FileCrypter {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+    private Map countSourceLetterFrequency(){
+        try(FileReader fileReader = new FileReader(sourceFileName)){
+            int numberOfBytes;
+            char[] buffer = new char[DEFAULT_BUFFER_CAPACITY];
+            while((numberOfBytes = fileReader.read(buffer))!= -1){
+                countedFrequency = bruteForceDecription.countLetterFrequency(buffer);
+            }
+
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        return countedFrequency;
     }
 
     private boolean isFilePathCorrect(String sourceFileName) {
