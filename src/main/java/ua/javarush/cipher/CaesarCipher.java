@@ -10,9 +10,8 @@ public class CaesarCipher {
     }
 
    //TODO:refactor to receive char parameter instead String
-    public char[] caesarCipherCode(String text, int key) {
-        char[] textArr = text.toCharArray();
-        char[] resultCharArray = new char[textArr.length];
+    public char[] caesarCipherCode(char[] text, int key) {
+        char[] resultCharArray = new char[text.length];
         int alphabetSize = alphabet.size();
         System.out.println();
         System.out.println(alphabetSize);
@@ -21,9 +20,9 @@ public class CaesarCipher {
             key = key % alphabetSize;
             System.out.println(key);
         }
-        for (int i = 0; i < textArr.length; i++) {
-            if (alphabet.contains(textArr[i])) {
-                int letterIndex = alphabet.indexOf((char)textArr[i]) + key;
+        for (int i = 0; i < text.length; i++) {
+            if (alphabet.contains(text[i])) {
+                int letterIndex = alphabet.indexOf((char)text[i]) + key;
 
                 if(letterIndex < 0){
                     letterIndex = letterIndex + alphabetSize;
@@ -41,8 +40,8 @@ public class CaesarCipher {
                     resultCharArray[i] = alphabet.get(letterIndex);
                 }
             } else {
-                System.out.print(textArr[i]);
-                resultCharArray[i] = textArr[i];
+                System.out.print(text[i]);
+                resultCharArray[i] = text[i];
             }
         }
         return resultCharArray;

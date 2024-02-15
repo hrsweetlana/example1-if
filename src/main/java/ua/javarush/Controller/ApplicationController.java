@@ -4,6 +4,7 @@ import ua.javarush.cipher.CaesarCipher;
 import ua.javarush.cli.CLI;
 import ua.javarush.constants.EnglishAlphabet;
 import ua.javarush.io.FileCrypter;
+
 import java.util.Arrays;
 
 public class ApplicationController {
@@ -20,8 +21,10 @@ public class ApplicationController {
     }
 
     public static void main(String[] args) {
-        if (args.length > 0) {
+        if (args.length == 3) {
             new ApplicationController(new FileCrypter(BUFFER_CAPACITY, args[0], new CaesarCipher(Arrays.asList(EnglishAlphabet.ENGLISH_ALPHABET)), args[1], Integer.parseInt(args[2]))).runApplication();
+        } else if (args.length == 2) {
+            new ApplicationController(new FileCrypter(BUFFER_CAPACITY, args[0], new CaesarCipher(Arrays.asList(EnglishAlphabet.ENGLISH_ALPHABET)), args[1])).runApplication();
         } else {
             new ApplicationController(CLI.readParameters()).runApplication();
             //new ApplicationController(new FileCrypter(32, "c:\\study\\source\\a.txt", new CaesarCipher(Arrays.asList(EnglishAlphabet.ENGLISH_ALPHABET)), "ENCRYPT", 3)).runApplication();
