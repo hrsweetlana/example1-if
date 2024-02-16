@@ -10,10 +10,10 @@ public class BruteForceDecription {
     Map letterFrequency;
     List<Character> alphabet;
     private static Map sortedLetterFrequency;
-    private Map<Character, Double> countedFrequency;
-    private Map<Character, Double> countedFrequencySearch;
+    private HashMap<Character, Double> countedFrequency;
+    private HashMap<Character, Double> countedFrequencySearch;
 
-    public BruteForceDecription(Map letterFrequency, Map countedFrequency, CaesarCipher caesarCipher) {
+    public BruteForceDecription(HashMap letterFrequency, HashMap countedFrequency, CaesarCipher caesarCipher) {
         this.letterFrequency = letterFrequency;
         this.countedFrequency = countedFrequency;
         this.caesarCipher = caesarCipher;
@@ -63,7 +63,7 @@ public class BruteForceDecription {
         return countedFrequency;
     }
 
-    private char findMaxFrequencyLetter(Map<Character, Double> map) {
+    private char findMaxFrequencyLetter(HashMap<Character, Double> map) {
         countedFrequencySearch = map;
         char c = ' ';
         double max = Collections.max(map.values());
@@ -76,18 +76,20 @@ public class BruteForceDecription {
         }
         return c;
     }
-    private Map<Character, Double> deleteUsedSymbol(Map<Character, Double> map, char c){
+    private Map<Character, Double> deleteUsedSymbol(HashMap<Character, Double> map, char c){
         countedFrequencySearch = map;
         countedFrequencySearch.remove(c);
         return  countedFrequencySearch;
     }
     public int findKey(){
         char searchedSymbol = findMaxFrequencyLetter(countedFrequencySearch);
-        System.out.println("searchedsymbol" + searchedSymbol);
+        System.out.println("Searched symbol:" + searchedSymbol);
         deleteUsedSymbol(countedFrequencySearch, searchedSymbol);
-        char  ethalonSymbol = findMaxFrequencyLetter(EnglishLetterFrequency.frequencyMap);
-        System.out.println("ethalonsymbol" + ethalonSymbol);
+        char  ethalonSymbol = findMaxFrequencyLetter((HashMap<Character, Double>) EnglishLetterFrequency.frequencyMap);
+        System.out.println("Ethalon symbol:" + ethalonSymbol);
+        //int	indexOf(Object o)
         int key = searchedSymbol - ethalonSymbol;
+        System.out.println("key:" + key);
         return key;
     }
     public void checkBruteForceResult() {

@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 public class FileCrypter {
 
@@ -21,7 +22,7 @@ public class FileCrypter {
     private CaesarCipher caesarCipher;
     private BruteForceDecription bruteForceDecription = null;
     private Option option;
-    private Map<Character, Double> countedFrequency = new HashMap<>();
+    private HashMap<Character, Double> countedFrequency = new HashMap<>();
     private int key;
 
     //TODO:refactor constructor not to dublicate code
@@ -62,10 +63,17 @@ public class FileCrypter {
         if (option.equals(Option.BRUTE_FORCE)) {
             //TODO: call brute force method
             System.out.println("BRUTE_FORCE is running......");
-            bruteForceDecription = new BruteForceDecription(EnglishLetterFrequency.frequencyMap, countedFrequency, caesarCipher);
+            bruteForceDecription = new BruteForceDecription((HashMap) EnglishLetterFrequency.frequencyMap, countedFrequency, caesarCipher);
             System.out.println(countSourceLetterFrequency());
             System.out.println(countedFrequency);
-            System.out.println(bruteForceDecription.findKey());
+
+            for(int i = 0; i < 1; i++){
+            key = bruteForceDecription.findKey();
+            option = Option.DECRYPT;
+            System.out.println(key);
+            copyFromSourceToTarget();
+
+            }
         }
         if (option.equals(Option.DECRYPT)) {
             key = -key;
@@ -74,9 +82,6 @@ public class FileCrypter {
             copyFromSourceToTarget();
         }
     }
-
-
-
     /*TODO: refactor? is there a sense to create a buffer or use Arrays copy methods
        to avoid crypting null bytes in array
     */
@@ -102,7 +107,7 @@ public class FileCrypter {
             int numberOfBytes;
             char[] buffer = new char[DEFAULT_BUFFER_CAPACITY];
             while((numberOfBytes = fileReader.read(buffer))!= -1){
-                countedFrequency = bruteForceDecription.countLetterFrequency(buffer);
+                countedFrequency = (HashMap<Character, Double>) bruteForceDecription.countLetterFrequency(buffer);
             }
 
         }
