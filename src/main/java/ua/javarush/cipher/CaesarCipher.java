@@ -3,6 +3,10 @@ package ua.javarush.cipher;
 import java.util.List;
 
 public class CaesarCipher {
+    public List<Character> getAlphabet() {
+        return alphabet;
+    }
+
     private List<Character> alphabet;
 
     public CaesarCipher(List<Character> alphabet) {

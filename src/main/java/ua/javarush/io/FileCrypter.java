@@ -21,7 +21,7 @@ public class FileCrypter {
     private CaesarCipher caesarCipher;
     private BruteForceDecription bruteForceDecription = null;
     private Option option;
-    private Map<Character, Integer> countedFrequency = new HashMap<>();
+    private Map<Character, Double> countedFrequency = new HashMap<>();
     private int key;
 
     //TODO:refactor constructor not to dublicate code
@@ -62,9 +62,10 @@ public class FileCrypter {
         if (option.equals(Option.BRUTE_FORCE)) {
             //TODO: call brute force method
             System.out.println("BRUTE_FORCE is running......");
-            bruteForceDecription = new BruteForceDecription(EnglishLetterFrequency.frequencyMap, Arrays.asList(EnglishAlphabet.ENGLISH_ALPHABET), countedFrequency);
+            bruteForceDecription = new BruteForceDecription(EnglishLetterFrequency.frequencyMap, countedFrequency, caesarCipher);
             System.out.println(countSourceLetterFrequency());
             System.out.println(countedFrequency);
+            System.out.println(bruteForceDecription.findKey());
         }
         if (option.equals(Option.DECRYPT)) {
             key = -key;

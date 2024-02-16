@@ -1,18 +1,22 @@
 package ua.javarush.BruteForce;
 
+import ua.javarush.cipher.CaesarCipher;
+import ua.javarush.constants.EnglishLetterFrequency;
+
 import java.util.*;
 
 public class BruteForceDecription {
+    CaesarCipher caesarCipher;
     Map letterFrequency;
-    List alphabet;
+    List<Character> alphabet;
     private static Map sortedLetterFrequency;
-    private Map<Character, Integer> countedFrequency;
-    private Map<Character, Integer> countedFrequencySearch;
+    private Map<Character, Double> countedFrequency;
+    private Map<Character, Double> countedFrequencySearch;
 
-    public BruteForceDecription(Map letterFrequency, List alphabet, Map countedFrequency) {
+    public BruteForceDecription(Map letterFrequency, Map countedFrequency, CaesarCipher caesarCipher) {
         this.letterFrequency = letterFrequency;
-        this.alphabet = alphabet;
         this.countedFrequency = countedFrequency;
+        this.caesarCipher = caesarCipher;
     }
 
     private static <K, V extends Comparable<? super V>> Map<K, V> sortLetterFrequency(Map<K, V> map) {
@@ -32,19 +36,19 @@ public class BruteForceDecription {
 
     public Map countLetterFrequency(char[] text) {
         //ArrayList alphabet = new ArrayList(Arrays.asList('a', 'b' ,'c', 'd', 'e', 'f', 'g', 'h', 'i', 'g', 'k', 'l', 'm', 'n', 'o', 'p'));
-
+        alphabet = caesarCipher.getAlphabet();
         Character key;
         for (int i = 0; i < text.length; i++) {
             if (alphabet.contains(text[i])) {
                 char symbol = Character.toLowerCase(text[i]);
                 System.out.println(symbol);
                 if (countedFrequency.containsKey(symbol)) {
-                    Integer value = countedFrequency.get(symbol);
+                    Double value = countedFrequency.get(symbol);
                     System.out.println("contains value: " + value);
                     countedFrequency.put(symbol, ++value);
                     System.out.println("contains value++: " + countedFrequency.get(symbol));
                 } else {
-                    Integer value = 0;
+                    Double value = 0d;
                     System.out.println("!contains: " + value);
                     countedFrequency.put(symbol, ++value);
                     System.out.println(countedFrequency);
@@ -55,15 +59,38 @@ public class BruteForceDecription {
         System.out.println(countedFrequency);
         sortLetterFrequency(countedFrequency);
         System.out.println("sortedMap:" + sortedLetterFrequency);
+        countedFrequencySearch = countedFrequency;
         return countedFrequency;
     }
 
-    private char findMaxFrequencyLetter(Map<Character, Integer> map){
+    private char findMaxFrequencyLetter(Map<Character, Double> map) {
         countedFrequencySearch = map;
-        int max = Collections.max(map.values());
-        for(){}
+        char c = ' ';
+        double max = Collections.max(map.values());
+        for (Character key : map.keySet()) {
+            Double value = map.get(key);
+            if(value.equals(max)){
+                c = key;
+                //countedFrequencySearch.remove(key);
+            }
+        }
+        return c;
     }
+    private Map<Character, Double> deleteUsedSymbol(Map<Character, Double> map, char c){
+        countedFrequencySearch = map;
+        countedFrequencySearch.remove(c);
+        return  countedFrequencySearch;
+    }
+    public int findKey(){
+        char searchedSymbol = findMaxFrequencyLetter(countedFrequencySearch);
+        System.out.println("searchedsymbol" + searchedSymbol);
+        deleteUsedSymbol(countedFrequencySearch, searchedSymbol);
+        char  ethalonSymbol = findMaxFrequencyLetter(EnglishLetterFrequency.frequencyMap);
+        System.out.println("ethalonsymbol" + ethalonSymbol);
+        int key = searchedSymbol - ethalonSymbol;
+        return key;
+    }
+    public void checkBruteForceResult() {
 
-    //private int findKey(){}
-    public void checkBruteForceRezult(){}
+    }
 }
