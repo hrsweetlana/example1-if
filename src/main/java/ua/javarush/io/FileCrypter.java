@@ -64,6 +64,7 @@ public class FileCrypter {
             System.out.println("BRUTE_FORCE is running......");
             bruteForceDecription = new BruteForceDecription(EnglishLetterFrequency.frequencyMap, Arrays.asList(EnglishAlphabet.ENGLISH_ALPHABET), countedFrequency);
             System.out.println(countSourceLetterFrequency());
+            System.out.println(countedFrequency);
         }
         if (option.equals(Option.DECRYPT)) {
             key = -key;

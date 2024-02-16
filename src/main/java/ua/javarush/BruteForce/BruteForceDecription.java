@@ -5,12 +5,29 @@ import java.util.*;
 public class BruteForceDecription {
     Map letterFrequency;
     List alphabet;
+    private static Map sortedLetterFrequency;
     private Map<Character, Integer> countedFrequency;
+    private Map<Character, Integer> countedFrequencySearch;
 
     public BruteForceDecription(Map letterFrequency, List alphabet, Map countedFrequency) {
         this.letterFrequency = letterFrequency;
         this.alphabet = alphabet;
         this.countedFrequency = countedFrequency;
+    }
+
+    private static <K, V extends Comparable<? super V>> Map<K, V> sortLetterFrequency(Map<K, V> map) {
+
+        List<Map.Entry<K, V>> list = new ArrayList<>(map.entrySet());
+        list.sort(Map.Entry.comparingByValue());
+        list = list.reversed();
+
+        Map<K, V> result = new LinkedHashMap<>();
+        for (Map.Entry<K, V> entry : list) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+        System.out.println("sortedLetterFrequency:" + result);
+        sortedLetterFrequency = result;
+        return result;
     }
 
     public Map countLetterFrequency(char[] text) {
@@ -36,6 +53,17 @@ public class BruteForceDecription {
             }
         }
         System.out.println(countedFrequency);
+        sortLetterFrequency(countedFrequency);
+        System.out.println("sortedMap:" + sortedLetterFrequency);
         return countedFrequency;
     }
+
+    private char findMaxFrequencyLetter(Map<Character, Integer> map){
+        countedFrequencySearch = map;
+        int max = Collections.max(map.values());
+        for(){}
+    }
+
+    //private int findKey(){}
+    public void checkBruteForceRezult(){}
 }
