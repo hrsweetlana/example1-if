@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class EnglishLetterFrequency {
     public static final Map<Character, Double> frequencyMap = (new HashMap<>() {{
-        //put(' ', 15.0);
+        put(' ', 15.0);
         put('e', 11.1607);
         put('a', 8.4966);
         put('r', 7.5809);

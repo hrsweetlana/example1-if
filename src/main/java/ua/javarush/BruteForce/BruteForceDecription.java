@@ -12,6 +12,7 @@ public class BruteForceDecription {
     private static Map sortedLetterFrequency;
     private HashMap<Character, Double> countedFrequency;
     private HashMap<Character, Double> countedFrequencySearch;
+    private static int countAllLetters=0;
 
     public BruteForceDecription(HashMap letterFrequency, HashMap countedFrequency, CaesarCipher caesarCipher) {
         this.letterFrequency = letterFrequency;
@@ -40,7 +41,8 @@ public class BruteForceDecription {
         Character key;
         for (int i = 0; i < text.length; i++) {
             if (alphabet.contains(text[i])) {
-                char symbol = Character.toLowerCase(text[i]);
+                //char symbol = Character.toLowerCase(text[i]);
+                char symbol = text[i];
                 System.out.println(symbol);
                 if (countedFrequency.containsKey(symbol)) {
                     Double value = countedFrequency.get(symbol);
@@ -86,9 +88,12 @@ public class BruteForceDecription {
         System.out.println("Searched symbol:" + searchedSymbol);
         deleteUsedSymbol(countedFrequencySearch, searchedSymbol);
         char  ethalonSymbol = findMaxFrequencyLetter((HashMap<Character, Double>) EnglishLetterFrequency.frequencyMap);
-        System.out.println("Ethalon symbol:" + ethalonSymbol);
-        //int	indexOf(Object o)
-        int key = searchedSymbol - ethalonSymbol;
+        System.out.println("Ethalon symbol:" + ethalonSymbol +"!");
+        int originalLetterIndex = alphabet.indexOf(searchedSymbol) + 1;
+        System.out.println("Original  Letter: "+originalLetterIndex);
+        int etalonLetterIndex = alphabet.indexOf(ethalonSymbol) + 1;
+        System.out.println("Etalon lLetter: "+etalonLetterIndex);
+        int key = etalonLetterIndex + originalLetterIndex;
         System.out.println("key:" + key);
         return key;
     }
