@@ -10,7 +10,8 @@ public class BruteForceDecription {
     Map letterFrequency;
     List<Character> alphabet;
     private static Map sortedLetterFrequency;
-    private HashMap<Character, Double> countedFrequency;
+    private HashMap<Character, Integer> countedFrequency;
+    private HashMap<Character, Double> frequencyPercentage = new HashMap<>();
     private HashMap<Character, Double> countedFrequencySearch;
     private static int countAllLetters=0;
 
@@ -36,21 +37,20 @@ public class BruteForceDecription {
     }
 
     public Map countLetterFrequency(char[] text) {
-        //ArrayList alphabet = new ArrayList(Arrays.asList('a', 'b' ,'c', 'd', 'e', 'f', 'g', 'h', 'i', 'g', 'k', 'l', 'm', 'n', 'o', 'p'));
+
         alphabet = caesarCipher.getAlphabet();
         Character key;
         for (int i = 0; i < text.length; i++) {
             if (alphabet.contains(text[i])) {
-                //char symbol = Character.toLowerCase(text[i]);
                 char symbol = text[i];
                 System.out.println(symbol);
                 if (countedFrequency.containsKey(symbol)) {
-                    Double value = countedFrequency.get(symbol);
+                    Integer value = countedFrequency.get(symbol);
                     System.out.println("contains value: " + value);
-                    countedFrequency.put(symbol, ++value);
+                    countedFrequency.put(symbol, ++value );
                     System.out.println("contains value++: " + countedFrequency.get(symbol));
                 } else {
-                    Double value = 0d;
+                    Integer value = 0;
                     System.out.println("!contains: " + value);
                     countedFrequency.put(symbol, ++value);
                     System.out.println(countedFrequency);
@@ -61,10 +61,19 @@ public class BruteForceDecription {
         System.out.println(countedFrequency);
         sortLetterFrequency(countedFrequency);
         System.out.println("sortedMap:" + sortedLetterFrequency);
-        countedFrequencySearch = countedFrequency;
+
+        countedFrequencySearch = letterFrequencyPercentage(countedFrequency);
+        System.out.println("Sorted persantage map: " + sortLetterFrequency(countedFrequencySearch));
+
         return countedFrequency;
     }
 
+    private HashMap<Character, Double> letterFrequencyPercentage(Map<Character, Integer> countedFrequency){
+        for(Map.Entry<Character, Integer> map: countedFrequency.entrySet()){
+            frequencyPercentage.put(map.getKey(), (double)map.getValue() * 100 /countedFrequency.size());
+        }
+        return frequencyPercentage;
+    }
     private char findMaxFrequencyLetter(HashMap<Character, Double> map) {
         countedFrequencySearch = map;
         char c = ' ';
@@ -97,7 +106,8 @@ public class BruteForceDecription {
         System.out.println("key:" + key);
         return key;
     }
+    //TODO: implement method for checking if brute_force results were successful, else try with next symbol from statistic map
     public void checkBruteForceResult() {
-
+        throw new UnsupportedOperationException();
     }
 }
