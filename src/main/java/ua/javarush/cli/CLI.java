@@ -11,18 +11,16 @@ import java.util.Arrays;
 
 public class CLI {
     private static final int BUFFER_CAPACITY = 1024;
-
     private static String filePath = "";
     private static String option = "";
     private static String key = "";
-
     private static FileCrypter fileCrypter;
 
     public static FileCrypter readParameters() {
 
         try (BufferedReader buffereReader = new BufferedReader(new InputStreamReader(System.in))) {
 
-            System.out.println("Choose the desired option for procceding the text:\n [e]ncrypt  [d]ecrypt  [b]rute force");
+            System.out.println("\nChoose the desired option for procceding the text:\n[e]ncrypt  [d]ecrypt  [b]rute force:");
             option = buffereReader.readLine();
             System.out.println("Type the path to file that has to be crypted:");
             filePath = buffereReader.readLine();
@@ -31,6 +29,7 @@ public class CLI {
                 option = buffereReader.readLine();
             } else if (option.equals("b")) {
                 option = "BRUTE_FORCE";
+                fileCrypter = new FileCrypter(BUFFER_CAPACITY, option.toString(), new CaesarCipher(Arrays.asList(EnglishAlphabet.ENGLISH_ALPHABET)), filePath);
             } else {
                 if (option.equals("e")) {
                     option = "ENCRYPT";
@@ -38,9 +37,9 @@ public class CLI {
                     option = "DECRYPT";
                 }
                 System.out.println("Type key:");
-                String key = buffereReader.readLine();
+                key = buffereReader.readLine();
+                fileCrypter = new FileCrypter(BUFFER_CAPACITY, option.toString(), new CaesarCipher(Arrays.asList(EnglishAlphabet.ENGLISH_ALPHABET)), filePath, key);
             }
-            fileCrypter = new FileCrypter(BUFFER_CAPACITY, option.toString(), new CaesarCipher(Arrays.asList(EnglishAlphabet.ENGLISH_ALPHABET)), filePath, key);
         } catch (IOException e) {
             e.printStackTrace();
         }

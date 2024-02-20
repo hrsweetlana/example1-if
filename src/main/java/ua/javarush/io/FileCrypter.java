@@ -1,18 +1,15 @@
 package ua.javarush.io;
 
-import ua.javarush.BruteForce.BruteForceDecription;
+import ua.javarush.bruteforce.BruteForceDecription;
 import ua.javarush.cipher.CaesarCipher;
-import ua.javarush.constants.EnglishAlphabet;
 import ua.javarush.constants.EnglishLetterFrequency;
 import ua.javarush.options.Option;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 public class FileCrypter {
 
@@ -47,7 +44,7 @@ public class FileCrypter {
         if (!(isFilePathCorrect(sourceFileName))) {
             throw new IllegalArgumentException("File path is wrong, current value: " + sourceFileName);
         }
-        if(key.equals("")){
+        if (key.equals("")) {
             throw new IllegalArgumentException("You must type a key for ENCRYPT/DECRYPT option");
         }
         this.bufferCapacity = Math.max(DEFAULT_BUFFER_CAPACITY, bufferCapacity);
@@ -64,18 +61,12 @@ public class FileCrypter {
 
     public void identifyOption(Option option) {
         if (option.equals(Option.BRUTE_FORCE)) {
-            //TODO: call brute force method
-            System.out.println("BRUTE_FORCE is running......");
             bruteForceDecription = new BruteForceDecription((HashMap) EnglishLetterFrequency.frequencyMap, countedFrequency, caesarCipher);
-            System.out.println(countSourceLetterFrequency());
-            System.out.println(countedFrequency);
-
-            for(int i = 0; i < 1; i++){
-            key = bruteForceDecription.findKey();
-            option = Option.DECRYPT;
-            System.out.println(key);
-            copyFromSourceToTarget();
-
+            countSourceLetterFrequency();
+            for (int i = 0; i < 1; i++) {
+                key = bruteForceDecription.findKey();
+                option = Option.DECRYPT;
+                copyFromSourceToTarget();
             }
         }
         if (option.equals(Option.DECRYPT)) {
@@ -85,36 +76,32 @@ public class FileCrypter {
             copyFromSourceToTarget();
         }
     }
+
     /*TODO: refactor? is there a sense to create a buffer or use Arrays copy methods
        to avoid crypting null bytes in array
     */
     private void copyFromSourceToTarget() {
         String targetFileName = createTargetFileName(Path.of(sourceFileName), option);
-        System.out.println(targetFileName);
         try (FileReader inputStream = new FileReader(sourceFileName);
              FileWriter outputStream = new FileWriter(targetFileName)) {
             int numberOfBytes;
             char[] buffer = new char[bufferCapacity];
             while ((numberOfBytes = inputStream.read(buffer)) != -1) {
-                //System.out.println(new String(buffer, 0, numberOfBytes));
                 buffer = caesarCipher.caesarCipherCode(buffer, key);
                 outputStream.write(buffer, 0, numberOfBytes);
-                //System.out.println(new String(buffer, 0, numberOfBytes));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-    private Map countSourceLetterFrequency(){
-        try(FileReader fileReader = new FileReader(sourceFileName)){
-            int numberOfBytes;
+
+    private Map countSourceLetterFrequency() {
+        try (FileReader fileReader = new FileReader(sourceFileName)) {
             char[] buffer = new char[DEFAULT_BUFFER_CAPACITY];
-            while((numberOfBytes = fileReader.read(buffer))!= -1){
+            while ((fileReader.read(buffer)) != -1) {
                 countedFrequency = (HashMap<Character, Double>) bruteForceDecription.countLetterFrequency(buffer);
             }
-
-        }
-        catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return countedFrequency;
@@ -133,6 +120,6 @@ public class FileCrypter {
         String fileName = path.getFileName().toString();
         int i = fileName.lastIndexOf('.');
 
-        return folderPath + "\\"+ fileName.substring(0, i) + "_" + option + fileName.substring(i, fileName.length());
+        return folderPath + "\\" + fileName.substring(0, i) + "_" + option + fileName.substring(i, fileName.length());
     }
 }
