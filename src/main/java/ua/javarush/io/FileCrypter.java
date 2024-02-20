@@ -26,7 +26,7 @@ public class FileCrypter {
     private int key;
 
     //TODO:refactor constructor not to dublicate code
-    public FileCrypter(int bufferCapacity, String sourceFileName, CaesarCipher caesarCipher, String option) {
+    public FileCrypter(int bufferCapacity, String option, CaesarCipher caesarCipher, String sourceFileName) {
         if (bufferCapacity < 0) {
             throw new IllegalArgumentException("Buffer capacity should be positive value, current value: " + bufferCapacity);
         }
@@ -40,7 +40,7 @@ public class FileCrypter {
         this.key = 0;
     }
 
-    public FileCrypter(int bufferCapacity, String sourceFileName, CaesarCipher caesarCipher, String option, int key) {
+    public FileCrypter(int bufferCapacity, String option, CaesarCipher caesarCipher, String sourceFileName, int key) {
         if (bufferCapacity < 0) {
             throw new IllegalArgumentException("Buffer capacity should be positive value, current value: " + bufferCapacity);
         }
