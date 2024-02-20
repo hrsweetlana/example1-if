@@ -14,7 +14,7 @@ public class CLI {
 
     private static String filePath = "";
     private static String option = "";
-    private static int key = 0;
+    private static String key = "";
 
     private static FileCrypter fileCrypter;
 
@@ -38,7 +38,7 @@ public class CLI {
                     option = "DECRYPT";
                 }
                 System.out.println("Type key:");
-                key = Integer.parseInt(buffereReader.readLine());
+                String key = buffereReader.readLine();
             }
             fileCrypter = new FileCrypter(BUFFER_CAPACITY, option.toString(), new CaesarCipher(Arrays.asList(EnglishAlphabet.ENGLISH_ALPHABET)), filePath, key);
         } catch (IOException e) {

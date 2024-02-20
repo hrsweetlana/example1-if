@@ -40,18 +40,21 @@ public class FileCrypter {
         this.key = 0;
     }
 
-    public FileCrypter(int bufferCapacity, String option, CaesarCipher caesarCipher, String sourceFileName, int key) {
+    public FileCrypter(int bufferCapacity, String option, CaesarCipher caesarCipher, String sourceFileName, String key) {
         if (bufferCapacity < 0) {
             throw new IllegalArgumentException("Buffer capacity should be positive value, current value: " + bufferCapacity);
         }
         if (!(isFilePathCorrect(sourceFileName))) {
             throw new IllegalArgumentException("File path is wrong, current value: " + sourceFileName);
         }
+        if(key.equals("")){
+            throw new IllegalArgumentException("You must type a key for ENCRYPT/DECRYPT option");
+        }
         this.bufferCapacity = Math.max(DEFAULT_BUFFER_CAPACITY, bufferCapacity);
         this.sourceFileName = sourceFileName;
         this.caesarCipher = caesarCipher;
         this.option = Option.valueOf(option);
-        this.key = key;
+        this.key = Integer.parseInt(key);
 
     }
 
