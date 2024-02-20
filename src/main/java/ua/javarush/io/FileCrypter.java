@@ -1,0 +1,125 @@
+package ua.javarush.io;
+
+import ua.javarush.bruteforce.BruteForceDecription;
+import ua.javarush.cipher.CaesarCipher;
+import ua.javarush.constants.EnglishLetterFrequency;
+import ua.javarush.options.Option;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+
+public class FileCrypter {
+
+    public static final int DEFAULT_BUFFER_CAPACITY = 32;
+    private int bufferCapacity;
+    private String sourceFileName;
+    private CaesarCipher caesarCipher;
+    private BruteForceDecription bruteForceDecription = null;
+    private Option option;
+    private HashMap<Character, Double> countedFrequency = new HashMap<>();
+    private int key;
+
+    //TODO:refactor constructor not to dublicate code
+    public FileCrypter(int bufferCapacity, String option, CaesarCipher caesarCipher, String sourceFileName) {
+        if (bufferCapacity < 0) {
+            throw new IllegalArgumentException("Buffer capacity should be positive value, current value: " + bufferCapacity);
+        }
+        if (!(isFilePathCorrect(sourceFileName))) {
+            throw new IllegalArgumentException("File path is wrong, current value: " + sourceFileName);
+        }
+        this.bufferCapacity = Math.max(DEFAULT_BUFFER_CAPACITY, bufferCapacity);
+        this.sourceFileName = sourceFileName;
+        this.caesarCipher = caesarCipher;
+        this.option = Option.valueOf(option);
+        this.key = 0;
+    }
+
+    public FileCrypter(int bufferCapacity, String option, CaesarCipher caesarCipher, String sourceFileName, String key) {
+        if (bufferCapacity < 0) {
+            throw new IllegalArgumentException("Buffer capacity should be positive value, current value: " + bufferCapacity);
+        }
+        if (!(isFilePathCorrect(sourceFileName))) {
+            throw new IllegalArgumentException("File path is wrong, current value: " + sourceFileName);
+        }
+        if (key.equals("")) {
+            throw new IllegalArgumentException("You must type a key for ENCRYPT/DECRYPT option");
+        }
+        this.bufferCapacity = Math.max(DEFAULT_BUFFER_CAPACITY, bufferCapacity);
+        this.sourceFileName = sourceFileName;
+        this.caesarCipher = caesarCipher;
+        this.option = Option.valueOf(option);
+        this.key = Integer.parseInt(key);
+
+    }
+
+    public Option getOption() {
+        return option;
+    }
+
+    public void identifyOption(Option option) {
+        if (option.equals(Option.BRUTE_FORCE)) {
+            bruteForceDecription = new BruteForceDecription((HashMap) EnglishLetterFrequency.frequencyMap, countedFrequency, caesarCipher);
+            countSourceLetterFrequency();
+            for (int i = 0; i < 1; i++) {
+                key = bruteForceDecription.findKey();
+                option = Option.DECRYPT;
+                copyFromSourceToTarget();
+            }
+        }
+        if (option.equals(Option.DECRYPT)) {
+            key = -key;
+            copyFromSourceToTarget();
+        } else if (option.equals(Option.ENCRYPT)) {
+            copyFromSourceToTarget();
+        }
+    }
+
+    /*TODO: refactor? is there a sense to create a buffer or use Arrays copy methods
+       to avoid crypting null bytes in array
+    */
+    private void copyFromSourceToTarget() {
+        String targetFileName = createTargetFileName(Path.of(sourceFileName), option);
+        try (FileReader inputStream = new FileReader(sourceFileName);
+             FileWriter outputStream = new FileWriter(targetFileName)) {
+            int numberOfBytes;
+            char[] buffer = new char[bufferCapacity];
+            while ((numberOfBytes = inputStream.read(buffer)) != -1) {
+                buffer = caesarCipher.caesarCipherCode(buffer, key);
+                outputStream.write(buffer, 0, numberOfBytes);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Map countSourceLetterFrequency() {
+        try (FileReader fileReader = new FileReader(sourceFileName)) {
+            char[] buffer = new char[DEFAULT_BUFFER_CAPACITY];
+            while ((fileReader.read(buffer)) != -1) {
+                countedFrequency = (HashMap<Character, Double>) bruteForceDecription.countLetterFrequency(buffer);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return countedFrequency;
+    }
+
+    private boolean isFilePathCorrect(String sourceFileName) {
+        return Files.isRegularFile(Path.of(sourceFileName));
+    }
+
+    /*      1) "c:\\study\\source\\a.txt" ENCODE      ---> c:\\study\\source\\a_ENCRYPT.txt
+            2) "c:\\study\\source\\a.txt" DECODE      ---> c:\\study\\source\\a_DECRYPT.txt
+            3) "c:\\study\\source\\a.txt" BRUTE_FORCE ---> c:\\study\\source\\a_BRUTE_FORCE.txt
+    */
+    private String createTargetFileName(Path path, Option option) {
+        String folderPath = path.getParent().toString();
+        String fileName = path.getFileName().toString();
+        int i = fileName.lastIndexOf('.');
+
+        return folderPath + "\\" + fileName.substring(0, i) + "_" + option + fileName.substring(i, fileName.length());
+    }
+}
